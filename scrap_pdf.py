@@ -59,7 +59,7 @@ class PDFScraper():
     def return_pages(self, file):
         with pdfplumber.open(file) as pdf:
             n_pages = len(pdf.pages)
-         return n_pages
+        return n_pages
 
     # Returns n° of word in pdf using bytes stream
     def return_words(self, file):
