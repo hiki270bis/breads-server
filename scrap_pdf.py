@@ -91,42 +91,43 @@ class PDFScraper():
         return counter
 
 if __name__ == "__main__":
-    test_url = "https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf"
-    t0 = time()
-    test_pdf = PDFScraper(test_url)
-    print(test_pdf.img)
-    print(test_pdf.url)
-    print(test_pdf.lines)
-    print(test_pdf.pages)
-    print(test_pdf.words)
-    t1 = time()
-    print(f"time = {t1-t0}")
+    # test_url = "https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf"
+    # t0 = time()
+    # test_pdf = PDFScraper(test_url)
+    # print(test_pdf.img)
+    # print(test_pdf.url)
+    # print(test_pdf.lines)
+    # print(test_pdf.pages)
+    # print(test_pdf.words)
+    # t1 = time()
+    # print(f"time = {t1-t0}")
 
 
 
 
-    # test_url = ["https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf",
-    #             "http://www.axmag.com/download/pdfurl-guide.pdf",
-    #             "https://www.research.gov/common/attachment/Desktop/How_do_I_create_a_PDF-A_file.pdf",
-    #             "https://library.princeton.edu/special-collections/sites/default/files/Creating_PDFA.pdf",
-    #             "http://www.umass.edu/preferen/gintis/hypercognition.pdf",
-    #             "https://www.researchgate.net/publication/315905287_INTRODUCTION_TO_ANTHROPOLOGY",
-    #             "https://theologicalstudies.org.uk/pdf/anthropology_cameron.pdf",
-    #             "https://www.researchgate.net/publication/327430054_Business_Anthropology",
-    #             "http://ijhssnet.com/journals/Vol_4_No_10_1_August_2014/19.pdf",
-    #             "http://marcuse.faculty.history.ucsb.edu/classes/201/articles/78KelleyPublicHistoryOriginsTPH0001.pdf",
-    #             "https://cbmw.org/wp-content/uploads/2019/05/eikon_1_1_web.pdf"]
-    # times = []
-    # for url in test_url:
-    #     t0 = time()
-    #     test_pdf = PDFScraper(url)
-    #     print(test_pdf.img)
-    #     print(test_pdf.url)
-    #     print(test_pdf.lines)
-    #     print(test_pdf.pages)
-    #     t1 = time()
-    #     times.append(t1-t0)
-    # print(times)
+    test_url = ["https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf",
+                "http://www.axmag.com/download/pdfurl-guide.pdf",
+                "https://www.research.gov/common/attachment/Desktop/How_do_I_create_a_PDF-A_file.pdf",
+                "https://library.princeton.edu/special-collections/sites/default/files/Creating_PDFA.pdf",
+                "http://www.umass.edu/preferen/gintis/hypercognition.pdf",
+                "https://www.researchgate.net/publication/315905287_INTRODUCTION_TO_ANTHROPOLOGY",
+                "https://theologicalstudies.org.uk/pdf/anthropology_cameron.pdf",
+                "https://www.researchgate.net/publication/327430054_Business_Anthropology",
+                "http://ijhssnet.com/journals/Vol_4_No_10_1_August_2014/19.pdf",
+                "http://marcuse.faculty.history.ucsb.edu/classes/201/articles/78KelleyPublicHistoryOriginsTPH0001.pdf",
+                "https://cbmw.org/wp-content/uploads/2019/05/eikon_1_1_web.pdf"]
+    times = []
+    for url in test_url:
+        t0 = time()
+        test_pdf = PDFScraper(url)
+        print(test_pdf.img)
+        print(test_pdf.url)
+        print(test_pdf.lines)
+        print(test_pdf.pages)
+        print(test_pdf.words)
+        t1 = time()
+        times.append(t1-t0)
+    print(times)
 
 
 # counting words: used 10 random PDFs; some with 500 words, others with 10000+. It took 109 secs

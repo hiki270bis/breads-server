@@ -118,6 +118,7 @@ if __name__ == "__main__":
         print(test_pdf.url)
         print(test_pdf.lines)
         print(test_pdf.pages)
+        print(test_pdf.words)
         t1 = time()
         times.append(t1-t0)
     print(times)
