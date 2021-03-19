@@ -39,17 +39,33 @@ class PDFScraper():
         except:
             return None
 
-    # Returns the first lines in the pdf - should figure out how to transform them in Title, summary, etc
-    def return_first_lines(self, file):
+    # Returns the first lines in the pdf
+    # Uses RegEx to rule out lines which don't describe the article
+    def return_first_lines(file):
         try:
             first_page = file.load_page(0)
             first_page_text = first_page.get_text("text")
-            lines = first_page_text.splitlines()
-            first_line = lines[0]
-            second_line = lines[1]
-            third_line = lines[2]
-            fourth_line = lines[3]
-            return first_line, second_line, third_line, fourth_line
+            lines = []
+            date_regex = re.compile(
+                r'(([0-9]{2})?(\/|-|(\s)*)?)([0-9]{2}|january|february|march|april|may|june|july|august|september|november|december)(\/|-|(\s)*)([0-9]{2,4})',
+                re.IGNORECASE)
+            invalid_regex = re.compile(r'^[\W\d]*$')
+            pages_regex = re.compile(r'page[\s]*[\d]{1,2}', re.IGNORECASE)
+            hour_regex = re.compile(r'[\d]{1,2}:[\d]{2}')
+            too_short_regex = re.compile(r'[\w]{4,}')
+            url_regex = re.compile(
+                r'(?:(?:https?|ftp|file):\/\/|www\.|ftp\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])')
+            copyright = re.compile('copyright|journal', re.IGNORECASE)
+            for line in first_page_text.splitlines():
+                if line != "" and re.fullmatch(invalid_regex, line) is None \
+                        and re.search(date_regex, line) is None \
+                        and re.search(copyright, line) is None \
+                        and re.search(url_regex, line) is None \
+                        and re.search(pages_regex, line) is None \
+                        and re.search(hour_regex, line) is None \
+                        and re.search(too_short_regex, line) is not None:
+                    lines.append(line)
+            return lines
         except:
             return None
 
@@ -86,42 +102,45 @@ class PDFScraper():
 
 if __name__ == "__main__":
 
+
+    test_url = "https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf"
+    t0 = time()
+    test_pdf = PDFScraper(test_url)
+    print(test_pdf.img)
+    print(test_pdf.url)
+    print(test_pdf.lines)
+    print(test_pdf.pages)
+    print(test_pdf.words)
+    t1 = time()
+    print(f"time = {t1-t0}")
+
+
+    # test_url = ["https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf",
+    #             "http://www.axmag.com/download/pdfurl-guide.pdf",
+    #             "https://www.research.gov/common/attachment/Desktop/How_do_I_create_a_PDF-A_file.pdf",
+    #             "https://library.princeton.edu/special-collections/sites/default/files/Creating_PDFA.pdf",
+    #             "http://www.umass.edu/preferen/gintis/hypercognition.pdf",
+    #             "https://www.researchgate.net/publication/315905287_INTRODUCTION_TO_ANTHROPOLOGY",
+    #             "https://theologicalstudies.org.uk/pdf/anthropology_cameron.pdf",
+    #             "https://www.researchgate.net/publication/327430054_Business_Anthropology",
+    #             "http://ijhssnet.com/journals/Vol_4_No_10_1_August_2014/19.pdf",
+    #             "http://marcuse.faculty.history.ucsb.edu/classes/201/articles/78KelleyPublicHistoryOriginsTPH0001.pdf",
+    #             "https://cbmw.org/wp-content/uploads/2019/05/eikon_1_1_web.pdf"]
+
+    # test_url = ["https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf"]
     #
-    # test_url = "https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf"
-    # t0 = time()
-    # test_pdf = PDFScraper(test_url)
-    # print(test_pdf.img)
-    # print(test_pdf.url)
-    # print(test_pdf.lines)
-    # print(test_pdf.pages)
-    # print(test_pdf.words)
-    # t1 = time()
-    # print(f"time = {t1-t0}")
-
-
-    test_url = ["https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf",
-                "http://www.axmag.com/download/pdfurl-guide.pdf",
-                "https://www.research.gov/common/attachment/Desktop/How_do_I_create_a_PDF-A_file.pdf",
-                "https://library.princeton.edu/special-collections/sites/default/files/Creating_PDFA.pdf",
-                "http://www.umass.edu/preferen/gintis/hypercognition.pdf",
-                "https://www.researchgate.net/publication/315905287_INTRODUCTION_TO_ANTHROPOLOGY",
-                "https://theologicalstudies.org.uk/pdf/anthropology_cameron.pdf",
-                "https://www.researchgate.net/publication/327430054_Business_Anthropology",
-                "http://ijhssnet.com/journals/Vol_4_No_10_1_August_2014/19.pdf",
-                "http://marcuse.faculty.history.ucsb.edu/classes/201/articles/78KelleyPublicHistoryOriginsTPH0001.pdf",
-                "https://cbmw.org/wp-content/uploads/2019/05/eikon_1_1_web.pdf"]
-    times = []
-    for url in test_url:
-        t0 = time()
-        test_pdf = PDFScraper(url)
-        print(test_pdf.img)
-        print(test_pdf.url)
-        print(test_pdf.lines)
-        print(test_pdf.pages)
-        print(test_pdf.words)
-        t1 = time()
-        times.append(t1-t0)
-    print(times)
+    # times = []
+    # for url in test_url:
+    #     t0 = time()
+    #     test_pdf = PDFScraper(url)
+    #     print(test_pdf.img)
+    #     print(test_pdf.url)
+    #     print(test_pdf.lines)
+    #     print(test_pdf.pages)
+    #     print(test_pdf.words)
+    #     t1 = time()
+    #     times.append(t1-t0)
+    # print(times)
 
 
 # with pdfplumber: with both words and pages [24.76241636276245, 2.762158155441284, 5.287302494049072, 7.731441974639893, 24.89242386817932, 6.081347703933716, 10.33959150314331, 7.7054407596588135, 9.47854208946228, 17.02997398376465, 33.96194243431091]
