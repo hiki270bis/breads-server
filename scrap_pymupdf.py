@@ -1,9 +1,9 @@
-import re
+import re, io, sys, json
 import requests
-import io
 import fitz
 from PIL import Image
 from time import time
+
 
 class PDFScraper():
     def __init__(self, url):
@@ -13,6 +13,7 @@ class PDFScraper():
         self.img = self.return_img(self.file_io)
         self.words = self.return_words(self.file_io)
         self.pages = self.return_pages(self.file_io)
+        self.domain = self.get_domain(self.url)
 
     # If the url provided takes directly to the pdf file, that is used as self.url
     # else this method searches for a link to the file and uses that as self.url
@@ -41,7 +42,7 @@ class PDFScraper():
 
     # Returns the first lines in the pdf
     # Uses RegEx to rule out lines which don't describe the article
-    def return_first_lines(file):
+    def return_first_lines(self, file):
         try:
             first_page = file.load_page(0)
             first_page_text = first_page.get_text("text")
@@ -99,21 +100,55 @@ class PDFScraper():
             counter = None
         return counter
 
+    # Returns domain
+    def get_domain(self, url):
+        try:
+            domain = re.search(r'(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]', url)
+            domain = domain.group()
+        except:
+            domain = 'Unable to get domain'
+
+        return domain
+
 
 if __name__ == "__main__":
 
+    #base_url = 'https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf'
 
-    test_url = "https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf"
-    t0 = time()
-    test_pdf = PDFScraper(test_url)
-    print(test_pdf.img)
-    print(test_pdf.url)
-    print(test_pdf.lines)
-    print(test_pdf.pages)
-    print(test_pdf.words)
-    t1 = time()
-    print(f"time = {t1-t0}")
+    base_url = sys.argv[1]
 
+    # I don't think cache is useful when scraping pdf(?)
+    #cached = 'https://webcache.googleusercontent.com/search?q=cache:' + BASE_URL
+
+    try:
+        pdf_site = PDFScraper(base_url)
+    except:
+        pass
+
+    values = [
+        pdf_site.lines[0],
+        pdf_site.domain,
+        pdf_site.lines[1:],
+        pdf_site.img,
+        pdf_site.words,
+        pdf_site.url
+    ]
+
+    # print to send data to node.js
+    print(json.dumps(values))
+
+    #print(values)
+
+    # test_url = "https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf"
+    # t0 = time()
+    # test_pdf = PDFScraper(test_url)
+    # print(test_pdf.img)
+    # print(test_pdf.url)
+    # print(test_pdf.lines)
+    # print(test_pdf.pages)
+    # print(test_pdf.words)
+    # t1 = time()
+    # print(f"time = {t1-t0}")
 
     # test_url = ["https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf",
     #             "http://www.axmag.com/download/pdfurl-guide.pdf",
@@ -141,7 +176,6 @@ if __name__ == "__main__":
     #     t1 = time()
     #     times.append(t1-t0)
     # print(times)
-
 
 # with pdfplumber: with both words and pages [24.76241636276245, 2.762158155441284, 5.287302494049072, 7.731441974639893, 24.89242386817932, 6.081347703933716, 10.33959150314331, 7.7054407596588135, 9.47854208946228, 17.02997398376465, 33.96194243431091]
 # with pymupdf:    with both words and pages [5.303016662597656, 4.170005798339844, 2.7500038146972656, 3.900005578994751, 1.550002098083496, 1.3200018405914307, 0.872002363204956, 1.9300026893615723, 0.7500009536743164, 11.090015649795532, 4.360006093978882]
