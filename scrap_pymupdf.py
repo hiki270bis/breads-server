@@ -10,7 +10,8 @@ class PDFScraper():
         self.url = self.get_pdf_url(url)
         self.file_io = self.open_pdf_as_IO(self.url)
         self.lines = self.return_first_lines(self.file_io)
-        self.img = self.return_img(self.file_io)
+        #    self.img = self.return_img(self.file_io)
+        self.img = ""
         self.words = self.return_words(self.file_io)
         self.pages = self.return_pages(self.file_io)
         self.domain = self.get_domain(self.url)
@@ -113,69 +114,33 @@ class PDFScraper():
 
 if __name__ == "__main__":
 
-    #base_url = 'https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf'
+    # base_url = 'https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf'
 
     base_url = sys.argv[1]
 
     # I don't think cache is useful when scraping pdf(?)
-    #cached = 'https://webcache.googleusercontent.com/search?q=cache:' + BASE_URL
+    # cached = 'https://webcache.googleusercontent.com/search?q=cache:' + BASE_URL
 
     try:
         pdf_site = PDFScraper(base_url)
     except:
         pass
 
+    title = pdf_site.lines[0]
+    domain = pdf_site.domain
+    description = pdf_site.lines[1:]
+    image = pdf_site.img
+    word_count = pdf_site.words
+    BASE_URL = pdf_site.url
+
     values = [
-        pdf_site.lines[0],
-        pdf_site.domain,
-        pdf_site.lines[1:],
-        pdf_site.img,
-        pdf_site.words,
-        pdf_site.url
+        title,
+        domain,
+        description,
+        image,
+        word_count,
+        BASE_URL,
     ]
 
     # print to send data to node.js
     print(json.dumps(values))
-
-    #print(values)
-
-    # test_url = "https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf"
-    # t0 = time()
-    # test_pdf = PDFScraper(test_url)
-    # print(test_pdf.img)
-    # print(test_pdf.url)
-    # print(test_pdf.lines)
-    # print(test_pdf.pages)
-    # print(test_pdf.words)
-    # t1 = time()
-    # print(f"time = {t1-t0}")
-
-    # test_url = ["https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf",
-    #             "http://www.axmag.com/download/pdfurl-guide.pdf",
-    #             "https://www.research.gov/common/attachment/Desktop/How_do_I_create_a_PDF-A_file.pdf",
-    #             "https://library.princeton.edu/special-collections/sites/default/files/Creating_PDFA.pdf",
-    #             "http://www.umass.edu/preferen/gintis/hypercognition.pdf",
-    #             "https://www.researchgate.net/publication/315905287_INTRODUCTION_TO_ANTHROPOLOGY",
-    #             "https://theologicalstudies.org.uk/pdf/anthropology_cameron.pdf",
-    #             "https://www.researchgate.net/publication/327430054_Business_Anthropology",
-    #             "http://ijhssnet.com/journals/Vol_4_No_10_1_August_2014/19.pdf",
-    #             "http://marcuse.faculty.history.ucsb.edu/classes/201/articles/78KelleyPublicHistoryOriginsTPH0001.pdf",
-    #             "https://cbmw.org/wp-content/uploads/2019/05/eikon_1_1_web.pdf"]
-
-    # test_url = ["https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf"]
-    #
-    # times = []
-    # for url in test_url:
-    #     t0 = time()
-    #     test_pdf = PDFScraper(url)
-    #     print(test_pdf.img)
-    #     print(test_pdf.url)
-    #     print(test_pdf.lines)
-    #     print(test_pdf.pages)
-    #     print(test_pdf.words)
-    #     t1 = time()
-    #     times.append(t1-t0)
-    # print(times)
-
-# with pdfplumber: with both words and pages [24.76241636276245, 2.762158155441284, 5.287302494049072, 7.731441974639893, 24.89242386817932, 6.081347703933716, 10.33959150314331, 7.7054407596588135, 9.47854208946228, 17.02997398376465, 33.96194243431091]
-# with pymupdf:    with both words and pages [5.303016662597656, 4.170005798339844, 2.7500038146972656, 3.900005578994751, 1.550002098083496, 1.3200018405914307, 0.872002363204956, 1.9300026893615723, 0.7500009536743164, 11.090015649795532, 4.360006093978882]
