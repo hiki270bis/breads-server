@@ -15,6 +15,7 @@ class PDFScraper():
         self.words = self.return_words(self.file_io)
         self.pages = self.return_pages(self.file_io)
         self.domain = self.get_domain(self.url)
+        self.values = self.return_values(self.lines[0], self.domain, "".join(self.lines[1:]), self.img, self.words, self.url)
 
     # If the url provided takes directly to the pdf file, that is used as self.url
     # else this method searches for a link to the file and uses that as self.url
@@ -111,10 +112,21 @@ class PDFScraper():
 
         return domain
 
+    def return_values(self, title, domain, description, image, word_count, BASE_URL):
+        values = [
+            title,
+            domain,
+            description,
+            image,
+            word_count,
+            BASE_URL
+        ]
+
+        return values
 
 if __name__ == "__main__":
 
-    # base_url = 'https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf'
+    #base_url = 'https://dash.harvard.edu/bitstream/handle/1/3403038/darnton_historybooks.pdf'
 
     base_url = sys.argv[1]
 
@@ -126,21 +138,7 @@ if __name__ == "__main__":
     except:
         pass
 
-    title = pdf_site.lines[0]
-    domain = pdf_site.domain
-    description = pdf_site.lines[1:]
-    image = pdf_site.img
-    word_count = pdf_site.words
-    BASE_URL = pdf_site.url
 
-    values = [
-        title,
-        domain,
-        description,
-        image,
-        word_count,
-        BASE_URL,
-    ]
 
     # print to send data to node.js
-    print(json.dumps(values))
+    print(json.dumps(pdf_site.values, indent=2))
