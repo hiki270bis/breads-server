@@ -11,7 +11,7 @@ class PDFScraper():
         self.file_io = self.open_pdf_as_IO(self.url)
         self.lines = self.return_first_lines(self.file_io)
         #    self.img = self.return_img(self.file_io)
-        self.img = ""
+        self.img = None
         self.words = self.return_words(self.file_io)
         self.pages = self.return_pages(self.file_io)
         self.domain = self.get_domain(self.url)
